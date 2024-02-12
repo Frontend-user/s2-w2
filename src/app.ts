@@ -6,7 +6,6 @@ import {usersRouter} from "./users/router/users-router";
 import {blogsRouter} from "./blogs/router/blogs-router";
 import {postsRouter} from "./posts/router/posts-router";
 import {authRouter} from "./auth/auth-router/auth-router";
-
 export const app = express()
 const jsonBodyMiddleware = express.json()
 app.use(jsonBodyMiddleware)
