@@ -20,8 +20,40 @@ const authValidators = [
 const express_1 = require("express");
 const http_statuses_1 = require("../../common/constants/http-statuses");
 const auth_service_1 = require("../auth-domain/auth-service");
+const jwt_service_1 = require("../../application/jwt-service");
+const current_user_1 = require("../../application/current-user");
+const users_query_repository_1 = require("../../users/query-repository/users-query-repository");
+const mongodb_1 = require("mongodb");
 exports.authRouter = (0, express_1.Router)({});
-exports.authRouter.post('/login', ...authValidators, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRouter.get('/me', 
+// ...authValidators,
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let t = req.headers.authorization.split(' ')[1];
+        const userId = yield jwt_service_1.jwtService.checkToken(t);
+        const getUserByID = yield users_query_repository_1.usersQueryRepository.getUserById(new mongodb_1.ObjectId(userId));
+        if (getUserByID) {
+            current_user_1.currentUser.userLogin = getUserByID.login;
+            current_user_1.currentUser.userId = userId;
+            res.send({
+                "email": getUserByID.email,
+                "login": getUserByID.login,
+                "userId": getUserByID.id
+            });
+            return;
+        }
+        else {
+            res.sendStatus(401);
+            return;
+        }
+    }
+    catch (error) {
+        res.sendStatus(http_statuses_1.HTTP_STATUSES.SERVER_ERROR_500);
+    }
+}));
+exports.authRouter.post('/login', 
+// ...authValidators,
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authData = {
             loginOrEmail: req.body.loginOrEmail,
@@ -32,7 +64,8 @@ exports.authRouter.post('/login', ...authValidators, (req, res) => __awaiter(voi
             res.sendStatus(http_statuses_1.HTTP_STATUSES.NOT_AUTH_401);
             return;
         }
-        res.sendStatus(http_statuses_1.HTTP_STATUSES.NO_CONTENT_204);
+        const token = yield jwt_service_1.jwtService.createJWT(req.headers.userid);
+        res.send({ accessToken: token });
     }
     catch (error) {
         res.sendStatus(http_statuses_1.HTTP_STATUSES.SERVER_ERROR_500);

@@ -11,6 +11,7 @@ testRouter.delete('/all-data', async (req: Request, res: Response) => {
         await client.db('db').collection('blogs').deleteMany({});
         await client.db('db').collection('posts').deleteMany({});
         await client.db('db').collection('users').deleteMany({});
+        await client.db('db').collection('comments').deleteMany({});
 
         res.sendStatus(204)
 

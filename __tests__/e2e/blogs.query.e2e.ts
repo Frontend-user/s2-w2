@@ -3,6 +3,7 @@ import request from 'supertest'
 import {BlogUpdateType, BlogViewType} from "../../src/common/types/blog-type";
 import {Routes} from "../../src/common/constants/routes";
 import any = jasmine.any;
+// @ts-ignore
 import {blogsTestManager} from "../utils/blogsTestManager";
 
 describe('/blogs', () => {

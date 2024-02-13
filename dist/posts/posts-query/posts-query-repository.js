@@ -14,6 +14,7 @@ const db_1 = require("../../db");
 const mongodb_1 = require("mongodb");
 const blogs_sorting_1 = require("../../blogs/blogs-query/utils/blogs-sorting");
 const blogs_paginate_1 = require("../../blogs/blogs-query/utils/blogs-paginate");
+const change_id_format_1 = require("../../common/custom-methods/change-id-format");
 exports.postsQueryRepository = {
     getPosts(sortBy, sortDirection, pageNumber, pageSize) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -22,7 +23,7 @@ exports.postsQueryRepository = {
             let posts = yield db_1.postsCollection.find({}).sort(sortQuery).skip(skip).limit(limit).toArray();
             const allPosts = yield db_1.postsCollection.find({}).sort(sortQuery).toArray();
             let pagesCount = Math.ceil(allPosts.length / newPageSize);
-            const fixArrayIds = posts.map((item => this.__changeIdFormat(item)));
+            const fixArrayIds = posts.map((item => (0, change_id_format_1.changeIdFormat)(item)));
             return {
                 "pagesCount": pagesCount,
                 "page": newPageNumber,
@@ -39,7 +40,7 @@ exports.postsQueryRepository = {
             let posts = yield db_1.postsCollection.find({ "blogId": blogId }).sort(sortQuery).skip(skip).limit(limit).toArray();
             const allPosts = yield db_1.postsCollection.find({ "blogId": blogId }).toArray();
             let pagesCount = Math.ceil(allPosts.length / newPageSize);
-            const fixArrayIds = posts.map((item => this.__changeIdFormat(item)));
+            const fixArrayIds = posts.map((item => (0, change_id_format_1.changeIdFormat)(item)));
             return {
                 "pagesCount": pagesCount,
                 "page": newPageNumber,
@@ -52,13 +53,8 @@ exports.postsQueryRepository = {
     getPostById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const post = yield db_1.postsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
-            return post ? this.__changeIdFormat(post) : false;
+            return post ? (0, change_id_format_1.changeIdFormat)(post) : false;
         });
     },
-    __changeIdFormat(obj) {
-        obj.id = obj._id;
-        delete obj._id;
-        return obj;
-    }
 };
 //# sourceMappingURL=posts-query-repository.js.map

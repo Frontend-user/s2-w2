@@ -4,6 +4,7 @@ import {ObjectId} from "mongodb";
 import {blogsSorting} from "../../blogs/blogs-query/utils/blogs-sorting";
 import {blogsPaginate} from "../../blogs/blogs-query/utils/blogs-paginate";
 import {Pagination} from "../../common/types/pagination";
+import {changeIdFormat} from "../../common/custom-methods/change-id-format";
 
 export const postsQueryRepository = {
     async getPosts(sortBy?: string, sortDirection?: string, pageNumber?: number, pageSize?: number): Promise<Pagination<PostViewType[]>> {
@@ -14,7 +15,7 @@ export const postsQueryRepository = {
         let posts: PostEntityType[] = await postsCollection.find({}).sort(sortQuery).skip(skip).limit(limit).toArray();
         const allPosts = await postsCollection.find({}).sort(sortQuery).toArray()
         let pagesCount = Math.ceil(allPosts.length / newPageSize)
-        const fixArrayIds = posts.map((item => this.__changeIdFormat(item)))
+        const fixArrayIds = posts.map((item => changeIdFormat(item)))
 
         return {
             "pagesCount": pagesCount,
@@ -32,7 +33,7 @@ export const postsQueryRepository = {
         const allPosts = await postsCollection.find({"blogId": blogId}).toArray()
         let pagesCount = Math.ceil(allPosts.length / newPageSize)
 
-        const fixArrayIds = posts.map((item => this.__changeIdFormat(item)))
+        const fixArrayIds = posts.map((item => changeIdFormat(item)))
 
         return {
             "pagesCount": pagesCount,
@@ -45,14 +46,9 @@ export const postsQueryRepository = {
 
     async getPostById(id: string | ObjectId): Promise<PostViewType | boolean> {
         const post: PostEntityType | null = await postsCollection.findOne({_id: new ObjectId(id)})
-        return post ? this.__changeIdFormat(post) : false
+        return post ? changeIdFormat(post) : false
     },
 
 
-    __changeIdFormat(obj: any) {
-        obj.id = obj._id
-        delete obj._id
-        return obj
-    }
 
 }

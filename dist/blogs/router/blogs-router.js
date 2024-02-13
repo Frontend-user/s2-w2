@@ -17,6 +17,7 @@ const http_statuses_1 = require("../../common/constants/http-statuses");
 const mongodb_1 = require("mongodb");
 const blogs_service_1 = require("../domain/blogs-service");
 const blogs_query_repository_1 = require("../blogs-query/blogs-query-repository");
+const query_data_1 = require("../../common/custom-methods/query-data");
 const blogValidators = [
     auth_validation_1.authorizationMiddleware,
     blogs_validation_1.blogDescValidation,
@@ -29,11 +30,8 @@ exports.blogs = [];
 exports.blogsRouter = (0, express_1.Router)({});
 exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        let { sortBy, sortDirection, pageNumber, pageSize } = (0, query_data_1.getQueryData)(req);
         let searchNameTerm = req.query.searchNameTerm ? String(req.query.searchNameTerm) : undefined;
-        let sortBy = req.query.sortBy ? String(req.query.sortBy) : undefined;
-        let sortDirection = req.query.sortDirection ? String(req.query.sortDirection) : undefined;
-        let pageNumber = req.query.pageNumber ? Number(req.query.pageNumber) : undefined;
-        let pageSize = req.query.pageSize ? Number(req.query.pageSize) : undefined;
         const blogs = yield blogs_query_repository_1.blogsQueryRepository.getBlogs(searchNameTerm, sortBy, sortDirection, pageNumber, pageSize);
         res.status(http_statuses_1.HTTP_STATUSES.OK_200).send(blogs);
     }

@@ -115,7 +115,7 @@ describe('/Users', () => {
     await request(app)
             .post(Routes.authLogin)
             .send(authData)
-           .expect(204)
+           .expect(200)
 
     })
 

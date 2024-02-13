@@ -20,7 +20,6 @@ exports.usersService = {
             let changeUserData = Object.assign({}, user);
             delete changeUserData.password;
             const userHashData = Object.assign(Object.assign({}, changeUserData), { 'passwordSalt': passwordSalt, 'passwordHash': passwordHash });
-            console.log(userHashData, 'userHashData,');
             const userId = yield users_repository_1.usersRepositories.createUser(userHashData);
             if (!userId) {
                 return false;

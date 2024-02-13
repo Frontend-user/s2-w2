@@ -19,6 +19,7 @@ const blogs_posts_bind_validation_1 = require("../validation/blogs-posts-bind-va
 const posts_query_repository_1 = require("../posts/posts-query/posts-query-repository");
 const posts_service_1 = require("../posts/domain/posts-service");
 const blogs_query_repository_1 = require("../blogs/blogs-query/blogs-query-repository");
+const query_data_1 = require("../common/custom-methods/query-data");
 exports.blogsPostsBindRouter = (0, express_1.Router)({});
 exports.blogsPostBindValidators = [
     auth_validation_1.authorizationMiddleware,
@@ -30,26 +31,7 @@ exports.blogsPostBindValidators = [
     blogs_posts_bind_validation_1.blogsPostsBindingInputValidationMiddleware
 ];
 exports.blogsPostsBindRouter.get('/:blogId/posts', blogs_posts_bind_validation_1.postBlogBindIdExistValidation, blogs_posts_bind_validation_1.blogsPostsBindingInputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let searchNameTerm;
-    let sortBy;
-    let sortDirection;
-    let pageNumber;
-    let pageSize;
-    if (req.query.SearchNameTerm) {
-        searchNameTerm = String(req.query.SearchNameTerm);
-    }
-    if (req.query.sortBy) {
-        sortBy = String(req.query.sortBy);
-    }
-    if (req.query.sortDirection) {
-        sortDirection = String(req.query.sortDirection);
-    }
-    if (req.query.pageNumber) {
-        pageNumber = Number(req.query.pageNumber);
-    }
-    if (req.query.pageSize) {
-        pageSize = Number(req.query.pageSize);
-    }
+    let { sortBy, sortDirection, pageNumber, pageSize } = (0, query_data_1.getQueryData)(req);
     try {
         const posts = yield posts_query_repository_1.postsQueryRepository.getPostsByBlogId(String(req.params.blogId), sortBy, sortDirection, pageNumber, pageSize);
         res.send(posts);

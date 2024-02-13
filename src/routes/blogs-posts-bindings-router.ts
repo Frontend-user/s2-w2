@@ -19,6 +19,7 @@ import {BlogViewType} from "../common/types/blog-type";
 import {postsQueryRepository} from "../posts/posts-query/posts-query-repository";
 import {postsService} from "../posts/domain/posts-service";
 import {blogsQueryRepository} from "../blogs/blogs-query/blogs-query-repository";
+import {getQueryData} from "../common/custom-methods/query-data";
 
 export const blogsPostsBindRouter = Router({})
 export const blogsPostBindValidators = [
@@ -34,27 +35,7 @@ blogsPostsBindRouter.get('/:blogId/posts',
     postBlogBindIdExistValidation,
     blogsPostsBindingInputValidationMiddleware,
     async (req: Request, res: Response) => {
-        let searchNameTerm
-        let sortBy
-        let sortDirection
-        let pageNumber
-        let pageSize
-        if (req.query.SearchNameTerm) {
-            searchNameTerm = String(req.query.SearchNameTerm)
-        }
-        if (req.query.sortBy) {
-            sortBy = String(req.query.sortBy)
-        }
-
-        if (req.query.sortDirection) {
-            sortDirection = String(req.query.sortDirection)
-        }
-        if (req.query.pageNumber) {
-            pageNumber = Number(req.query.pageNumber)
-        }
-        if (req.query.pageSize) {
-            pageSize = Number(req.query.pageSize)
-        }
+        let {sortBy, sortDirection, pageNumber, pageSize} = getQueryData(req)
 
         try {
             const posts = await postsQueryRepository.getPostsByBlogId(String(req.params.blogId), sortBy, sortDirection, pageNumber,pageSize)

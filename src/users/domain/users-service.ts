@@ -18,7 +18,6 @@ export const usersService = {
             'passwordSalt': passwordSalt,
             'passwordHash': passwordHash
         }
-        console.log(userHashData, 'userHashData,')
         const userId = await usersRepositories.createUser(userHashData)
         if (!userId) {
             return false

@@ -1,4 +1,7 @@
 {
+  "files": [
+    "index.d.ts"
+  ],
   "compilerOptions": {
     "target": "es2016",
     "rootDir": "./src",
@@ -10,8 +13,14 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.e2e.ts", ],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.e2e.ts"
+  ]
 }

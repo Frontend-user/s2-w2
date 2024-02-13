@@ -19,6 +19,10 @@ const mongodb_1 = require("mongodb");
 const posts_service_1 = require("../domain/posts-service");
 const posts_query_repository_1 = require("../posts-query/posts-query-repository");
 const blogs_query_repository_1 = require("../../blogs/blogs-query/blogs-query-repository");
+const comments_service_1 = require("../../comments/service/comments-service");
+const comment_query_repository_1 = require("../../comments/query-repository/comment-query-repository");
+const comments_validation_1 = require("../../comments/validation/comments-validation");
+const query_data_1 = require("../../common/custom-methods/query-data");
 exports.postValidators = [
     auth_validation_1.authorizationMiddleware,
     posts_validation_1.postTitleValidation,
@@ -29,12 +33,32 @@ exports.postValidators = [
     blogs_validation_1.inputValidationMiddleware
 ];
 exports.postsRouter = (0, express_1.Router)({});
+exports.postsRouter.post('/:postId/comments', auth_validation_1.bearerAuthMiddleware, comments_validation_1.commentPostIdExistValidation, comments_validation_1.commentContentValidation, blogs_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const commentContent = req.body.content;
+    const postId = req.params.postId;
+    const commentId = yield comments_service_1.commentsService.createComment(commentContent, postId);
+    if (!commentId) {
+        res.sendStatus(404);
+    }
+    else {
+        const comment = yield comment_query_repository_1.commentQueryRepository.getCommentById(commentId);
+        res.status(201).send(comment);
+    }
+}));
+exports.postsRouter.get('/:postId/comments', comments_validation_1.commentPostIdExistValidation, blogs_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { sortBy, sortDirection, pageNumber, pageSize } = (0, query_data_1.getQueryData)(req);
+    const postId = req.params.postId;
+    try {
+        const comment = yield comment_query_repository_1.commentQueryRepository.getCommentsByPostId(postId, sortBy, sortDirection, pageNumber, pageSize);
+        res.status(201).send(comment);
+    }
+    catch (e) {
+        res.send(http_statuses_1.HTTP_STATUSES.SERVER_ERROR_500);
+    }
+}));
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let sortBy = req.query.sortBy ? String(req.query.sortBy) : undefined;
-        let sortDirection = req.query.sortDirection ? String(req.query.sortDirection) : undefined;
-        let pageNumber = req.query.pageNumber ? Number(req.query.pageNumber) : undefined;
-        let pageSize = req.query.pageSize ? Number(req.query.pageSize) : undefined;
+        let { sortBy, sortDirection, pageNumber, pageSize } = (0, query_data_1.getQueryData)(req);
         const posts = yield posts_query_repository_1.postsQueryRepository.getPosts(sortBy, sortDirection, pageNumber, pageSize);
         res.status(http_statuses_1.HTTP_STATUSES.OK_200).send(posts);
     }

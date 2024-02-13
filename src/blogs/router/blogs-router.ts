@@ -10,6 +10,7 @@ import {HTTP_STATUSES} from "../../common/constants/http-statuses";
 import {ObjectId} from "mongodb";
 import {blogsService} from "../domain/blogs-service";
 import {blogsQueryRepository} from "../blogs-query/blogs-query-repository";
+import {getQueryData} from "../../common/custom-methods/query-data";
 
 const blogValidators = [
     authorizationMiddleware,
@@ -26,11 +27,8 @@ export const blogsRouter = Router({})
 blogsRouter.get('/',
     async (req: Request, res: Response) => {
         try {
+            let {sortBy, sortDirection, pageNumber, pageSize} = getQueryData(req)
             let searchNameTerm = req.query.searchNameTerm ? String(req.query.searchNameTerm): undefined
-            let sortBy = req.query.sortBy ? String(req.query.sortBy): undefined
-            let sortDirection= req.query.sortDirection ? String(req.query.sortDirection): undefined
-            let pageNumber = req.query.pageNumber ?  Number(req.query.pageNumber): undefined
-            let pageSize = req.query.pageSize ?  Number(req.query.pageSize): undefined
 
             const blogs = await blogsQueryRepository.getBlogs(searchNameTerm, sortBy, sortDirection, pageNumber,pageSize)
             res.status(HTTP_STATUSES.OK_200).send(blogs)

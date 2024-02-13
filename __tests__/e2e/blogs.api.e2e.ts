@@ -1,5 +1,6 @@
 import {app} from "../../src/app";
 import request from 'supertest'
+// @ts-ignore
 import {blogsTestManager} from "../utils/blogsTestManager";
 import {Routes} from "../../src/common/constants/routes";
 import {BlogUpdateType} from "../../src/common/types/blog-type";

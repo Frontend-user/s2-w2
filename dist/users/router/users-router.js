@@ -18,6 +18,7 @@ const blogs_validation_1 = require("../../validation/blogs-validation");
 const users_service_1 = require("../domain/users-service");
 const users_query_repository_1 = require("../query-repository/users-query-repository");
 const auth_validation_1 = require("../../validation/auth-validation");
+const query_data_1 = require("../../common/custom-methods/query-data");
 const usersValidators = [
     auth_validation_1.authorizationMiddleware,
     users_validation_1.usersLoginValidation,
@@ -27,14 +28,10 @@ const usersValidators = [
 ];
 exports.usersRouter = (0, express_1.Router)({});
 exports.usersRouter.get('/', auth_validation_1.authorizationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.query, 'FILTER QUERY!!!!!!!!!!!!!!!!!!!!!!');
     try {
+        let { sortBy, sortDirection, pageNumber, pageSize } = (0, query_data_1.getQueryData)(req);
         let searchLoginTerm = req.query.searchLoginTerm ? String(req.query.searchLoginTerm) : undefined;
         let searchEmailTerm = req.query.searchEmailTerm ? String(req.query.searchEmailTerm) : undefined;
-        let sortBy = req.query.sortBy ? String(req.query.sortBy) : undefined;
-        let sortDirection = req.query.sortDirection ? String(req.query.sortDirection) : undefined;
-        let pageNumber = req.query.pageNumber ? Number(req.query.pageNumber) : undefined;
-        let pageSize = req.query.pageSize ? Number(req.query.pageSize) : undefined;
         const blogs = yield users_query_repository_1.usersQueryRepository.getUsers(searchLoginTerm, searchEmailTerm, sortBy, sortDirection, pageNumber, pageSize);
         res.status(http_statuses_1.HTTP_STATUSES.OK_200).send(blogs);
     }
