@@ -17,11 +17,13 @@ export const authorizationMiddleware = async (req: Request, res: Response, next:
 }
 
 export const bearerAuthMiddleware = async (req:Request, res:Response, next: NextFunction)=>{
+    console.log(req,'1')
     let token = req.headers.authorization!.split(' ')[1]
 
     const userId = await jwtService.checkToken(token)
     const getUserByID = await usersQueryRepository.getUserById(new ObjectId(userId))
-
+    console.log(userId,'2')
+    console.log(getUserByID, '3')
     if(!getUserByID || !userId){
 
         res.sendStatus(401)
@@ -29,7 +31,7 @@ export const bearerAuthMiddleware = async (req:Request, res:Response, next: Next
     } else {
 
         currentUser.userId = userId
-        currentUser.userLogin = getUserByID.login+
+        currentUser.userLogin = getUserByID.login
     // currentUser.updateCurrentUser(userId,getUserByID.login)
         next()
     }

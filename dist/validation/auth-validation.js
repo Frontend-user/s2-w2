@@ -27,18 +27,21 @@ const authorizationMiddleware = (req, res, next) => __awaiter(void 0, void 0, vo
 });
 exports.authorizationMiddleware = authorizationMiddleware;
 const bearerAuthMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req, '1');
     let token = req.headers.authorization.split(' ')[1];
     const userId = yield jwt_service_1.jwtService.checkToken(token);
     const getUserByID = yield users_query_repository_1.usersQueryRepository.getUserById(new mongodb_1.ObjectId(userId));
+    console.log(userId, '2');
+    console.log(getUserByID, '3');
     if (!getUserByID || !userId) {
         res.sendStatus(401);
         return;
     }
     else {
         current_user_1.currentUser.userId = userId;
-        current_user_1.currentUser.userLogin = getUserByID.login +
-            // currentUser.updateCurrentUser(userId,getUserByID.login)
-            next();
+        current_user_1.currentUser.userLogin = getUserByID.login;
+        // currentUser.updateCurrentUser(userId,getUserByID.login)
+        next();
     }
 });
 exports.bearerAuthMiddleware = bearerAuthMiddleware;

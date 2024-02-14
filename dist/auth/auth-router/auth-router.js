@@ -64,6 +64,9 @@ exports.authRouter.post('/login',
             res.sendStatus(http_statuses_1.HTTP_STATUSES.NOT_AUTH_401);
             return;
         }
+        console.log(req.headers.userid, 'req.headers.userid');
+        console.log(req.headers, 'req.headers.userid  HERE!');
+        res.send(req.headers);
         const token = yield jwt_service_1.jwtService.createJWT(req.headers.userid);
         res.send({ accessToken: token });
     }

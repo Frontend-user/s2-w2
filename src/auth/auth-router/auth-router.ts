@@ -62,6 +62,9 @@ authRouter.post('/login',
                 res.sendStatus(HTTP_STATUSES.NOT_AUTH_401)
                 return
             }
+            console.log(req.headers.userid,'req.headers.userid')
+            console.log(req.headers,'req.headers.userid  HERE!')
+            res.send(req.headers)
             const token = await jwtService.createJWT(req.headers.userid)
             res.send({accessToken: token})
 
