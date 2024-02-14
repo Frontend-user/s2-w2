@@ -28,7 +28,6 @@ exports.commentsRouter.put('/:commentId', auth_validation_1.bearerAuthMiddleware
     }
 }));
 exports.commentsRouter.delete('/:commentId', auth_validation_1.bearerAuthMiddleware, comments_validation_1.commentIdExistValidation, comments_validation_1.haveAccesForUpdate, comments_validation_1.commentDeleteInputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.headers, 'reqheaderDELETE');
     try {
         const response = yield comments_service_1.commentsService.deleteComment(new mongodb_1.ObjectId(req.params.commentId));
         res.sendStatus(response ? http_statuses_1.HTTP_STATUSES.NO_CONTENT_204 : http_statuses_1.HTTP_STATUSES.NOT_FOUND_404);

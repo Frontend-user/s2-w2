@@ -24,7 +24,6 @@ export const authRouter = Router({})
 
 
 authRouter.get('/me',
-    // ...authValidators,
     async (req: Request, res: Response) => {
         try {
             let t = req.headers.authorization!.split(' ')[1]
@@ -51,7 +50,6 @@ authRouter.get('/me',
     })
 
 authRouter.post('/login',
-    // ...authValidators,
     async (req: Request, res: Response) => {
         try {
             const authData: AuthType = {

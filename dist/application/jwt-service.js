@@ -10,19 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.jwtService = void 0;
-const current_user_1 = require("./current-user");
 const jwt = require('jsonwebtoken');
 exports.jwtService = {
     createJWT(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const token = yield jwt.sign({ userId: userId }, '1', { expiresIn: '1h' });
-            return token;
+            return yield jwt.sign({ userId: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
         });
     },
     checkToken(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield jwt.verify(token, '1');
+                const result = yield jwt.verify(token, process.env.JWT_SECRET);
                 return result.userId;
             }
             catch (error) {
@@ -31,10 +29,5 @@ exports.jwtService = {
             }
         });
     },
-    updateCurrentUser(userId, userLogin) {
-        current_user_1.currentUser.userId = userId;
-        current_user_1.currentUser.userLogin = userLogin;
-        return;
-    }
 };
 //# sourceMappingURL=jwt-service.js.map

@@ -26,9 +26,7 @@ const users_query_repository_1 = require("../../users/query-repository/users-que
 const mongodb_1 = require("mongodb");
 const auth_repository_1 = require("../auth-repository/auth-repository");
 exports.authRouter = (0, express_1.Router)({});
-exports.authRouter.get('/me', 
-// ...authValidators,
-(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRouter.get('/me', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let t = req.headers.authorization.split(' ')[1];
         const userId = yield jwt_service_1.jwtService.checkToken(t);
@@ -52,9 +50,7 @@ exports.authRouter.get('/me',
         res.sendStatus(http_statuses_1.HTTP_STATUSES.SERVER_ERROR_500);
     }
 }));
-exports.authRouter.post('/login', 
-// ...authValidators,
-(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRouter.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authData = {
             loginOrEmail: req.body.loginOrEmail,

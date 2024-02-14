@@ -5,6 +5,7 @@ import {blogsSorting} from "./utils/blogs-sorting";
 import {blogsFinding} from "./utils/blogs-finding";
 import {blogsPaginate} from "./utils/blogs-paginate";
 import {Pagination} from "../../common/types/pagination";
+import {changeIdFormat} from "../../common/custom-methods/change-id-format";
 
 
 export const blogsQueryRepository = {
@@ -18,7 +19,7 @@ export const blogsQueryRepository = {
         let pagesCount = Math.ceil(allBlogs.length / newPageSize)
 
 
-        const fixArrayIds: BlogViewType[] = blogs.map((item => this.__changeIdFormat(item)))
+        const fixArrayIds: BlogViewType[] = blogs.map((item => changeIdFormat(item)))
 
         const response: Pagination<BlogViewType[]> = {
             "pagesCount": pagesCount,
@@ -34,15 +35,10 @@ export const blogsQueryRepository = {
     async getBlogById(id: string | ObjectId): Promise<BlogViewType | false> {
         if (ObjectId.isValid(id) && typeof id === 'string' || id instanceof ObjectId) {
             const blog: BlogEntityType | null = await blogsCollection.findOne({_id: new ObjectId(id)})
-            return blog ? this.__changeIdFormat(blog) : false
+            return blog ?  changeIdFormat(blog) : false
         }
         return false
 
     },
 
-    __changeIdFormat(obj: any) {
-        obj.id = obj._id
-        delete obj._id
-        return obj
-    }
 }

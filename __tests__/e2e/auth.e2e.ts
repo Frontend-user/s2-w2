@@ -108,7 +108,7 @@ describe('/Users', () => {
 
         const getCommentResp = await request(app)
             .get(`/posts/${postId}/comments`)
-            .expect(201,arr)
+            .expect(200,arr)
 
     })
 

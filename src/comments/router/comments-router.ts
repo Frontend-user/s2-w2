@@ -4,23 +4,15 @@ import {blogsQueryRepository} from "../../blogs/blogs-query/blogs-query-reposito
 import {PostCreateType, PostViewType} from "../../common/types/post-type";
 import {postsService} from "../../posts/domain/posts-service";
 import {ObjectId} from "mongodb";
-import {postsQueryRepository} from "../../posts/posts-query/posts-query-repository";
 import {HTTP_STATUSES} from "../../common/constants/http-statuses";
-import {postsRouter, postValidators} from "../../posts/router/posts-router";
 import {commentsService} from "../service/comments-service";
-import {authorizationMiddleware, bearerAuthMiddleware} from "../../validation/auth-validation";
+import { bearerAuthMiddleware} from "../../validation/auth-validation";
 import {commentQueryRepository} from "../query-repository/comment-query-repository";
-import {postIdValidation} from "../../validation/posts-validation";
 import {
     commentContentValidation, commentDeleteInputValidationMiddleware,
     commentIdExistValidation,
     commentInputValidationMiddleware, haveAccesForUpdate
 } from "../validation/comments-validation";
-import {param, validationResult} from "express-validator";
-import {commentsRepository} from "../repository/comments-repository";
-import {inputValidationMiddleware} from "../../validation/blogs-validation";
-import {CommentEntity} from "../types/comment-type";
-import {ErrorType} from "../../common/types/error-type";
 
 export const commentsRouter = Router({})
 
@@ -50,7 +42,6 @@ commentsRouter.delete('/:commentId',
     haveAccesForUpdate,
     commentDeleteInputValidationMiddleware,
     async (req: Request, res: Response) => {
-        console.log(req.headers,'reqheaderDELETE')
         try {
             const response: boolean = await commentsService.deleteComment(new ObjectId(req.params.commentId))
             res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404)

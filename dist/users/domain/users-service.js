@@ -41,9 +41,5 @@ exports.usersService = {
             return false;
         });
     },
-    __generateSalt() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    },
 };
 //# sourceMappingURL=users-service.js.map

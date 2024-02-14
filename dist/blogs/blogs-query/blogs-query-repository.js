@@ -15,6 +15,7 @@ const mongodb_1 = require("mongodb");
 const blogs_sorting_1 = require("./utils/blogs-sorting");
 const blogs_finding_1 = require("./utils/blogs-finding");
 const blogs_paginate_1 = require("./utils/blogs-paginate");
+const change_id_format_1 = require("../../common/custom-methods/change-id-format");
 exports.blogsQueryRepository = {
     getBlogs(searchNameTerm, sortBy, sortDirection, pageNumber, pageSize) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -24,7 +25,7 @@ exports.blogsQueryRepository = {
             let blogs = yield db_1.blogsCollection.find(findQuery).sort(sortQuery).skip(skip).limit(limit).toArray();
             const allBlogs = yield db_1.blogsCollection.find(findQuery).sort(sortQuery).toArray();
             let pagesCount = Math.ceil(allBlogs.length / newPageSize);
-            const fixArrayIds = blogs.map((item => this.__changeIdFormat(item)));
+            const fixArrayIds = blogs.map((item => (0, change_id_format_1.changeIdFormat)(item)));
             const response = {
                 "pagesCount": pagesCount,
                 "page": newPageNumber,
@@ -39,15 +40,10 @@ exports.blogsQueryRepository = {
         return __awaiter(this, void 0, void 0, function* () {
             if (mongodb_1.ObjectId.isValid(id) && typeof id === 'string' || id instanceof mongodb_1.ObjectId) {
                 const blog = yield db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
-                return blog ? this.__changeIdFormat(blog) : false;
+                return blog ? (0, change_id_format_1.changeIdFormat)(blog) : false;
             }
             return false;
         });
     },
-    __changeIdFormat(obj) {
-        obj.id = obj._id;
-        delete obj._id;
-        return obj;
-    }
 };
 //# sourceMappingURL=blogs-query-repository.js.map

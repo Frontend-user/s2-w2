@@ -39,6 +39,4 @@ export const usersService = {
         return false
     },
 
-    async __generateSalt() {
-    },
 }
