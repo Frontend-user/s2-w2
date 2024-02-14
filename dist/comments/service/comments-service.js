@@ -27,6 +27,16 @@ exports.commentsService = {
             const response = yield comments_repository_1.commentsRepository.createComment(newComment);
             return response;
         });
-    }
+    },
+    updateComment(id, content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield comments_repository_1.commentsRepository.updateComment(id, { content: content });
+        });
+    },
+    deleteComment(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield comments_repository_1.commentsRepository.deleteCommentById(id);
+        });
+    },
 };
 //# sourceMappingURL=comments-service.js.map

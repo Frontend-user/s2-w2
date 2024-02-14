@@ -18,6 +18,7 @@ import {currentUser} from "../../application/current-user";
 import {usersService} from "../../users/domain/users-service";
 import {usersQueryRepository} from "../../users/query-repository/users-query-repository";
 import {ObjectId} from "mongodb";
+import {authRepositories} from "../auth-repository/auth-repository";
 
 export const authRouter = Router({})
 
@@ -62,12 +63,13 @@ authRouter.post('/login',
                 res.sendStatus(HTTP_STATUSES.NOT_AUTH_401)
                 return
             }
-            console.log(req.headers.userid,'req.headers.userid')
-            console.log(req.headers,'req.headers.userid  HERE!')
-            res.send(req.headers)
-            const token = await jwtService.createJWT(req.headers.userid)
-            res.send({accessToken: token})
+            const user = await authRepositories.getUserIdByAutData(authData)
+            if(user){
 
+                const token = await jwtService.createJWT(user._id)
+                res.send({accessToken: token})
+
+            }
         } catch (error) {
             res.sendStatus(HTTP_STATUSES.SERVER_ERROR_500)
         }

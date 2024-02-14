@@ -13,7 +13,6 @@ exports.commentQueryRepository = void 0;
 const db_1 = require("../../db");
 const blogs_sorting_1 = require("../../blogs/blogs-query/utils/blogs-sorting");
 const blogs_paginate_1 = require("../../blogs/blogs-query/utils/blogs-paginate");
-const change_id_format_1 = require("../../common/custom-methods/change-id-format");
 exports.commentQueryRepository = {
     getCommentByCommentId() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,9 +25,9 @@ exports.commentQueryRepository = {
             const sortQuery = blogs_sorting_1.blogsSorting.getSorting(sortBy, sortDirection);
             const { skip, limit, newPageNumber, newPageSize } = blogs_paginate_1.blogsPaginate.getPagination(pageNumber, pageSize);
             const comments = yield db_1.commentsCollection.find({ postId: postId }).sort(sortQuery).skip(skip).limit(limit).toArray();
-            const allComments = yield db_1.commentsCollection.find({ postId: postId }).sort(sortQuery).skip(skip).limit(limit).toArray();
+            const allComments = yield db_1.commentsCollection.find({ postId: postId }).sort(sortQuery).toArray();
             let pagesCount = Math.ceil(allComments.length / newPageSize);
-            const fixArrayIds = comments.map((item => (0, change_id_format_1.changeIdFormat)(item)));
+            const fixArrayIds = comments.map((item => this.changeCommentFormat(item)));
             return {
                 "pagesCount": pagesCount,
                 "page": newPageNumber,
@@ -41,8 +40,14 @@ exports.commentQueryRepository = {
     getCommentById(commentId) {
         return __awaiter(this, void 0, void 0, function* () {
             const comment = yield db_1.commentsCollection.findOne({ _id: commentId });
-            return comment ? (0, change_id_format_1.changeIdFormat)(comment) : false;
+            return comment ? this.changeCommentFormat(comment) : false;
         });
     },
+    changeCommentFormat(obj) {
+        obj.id = obj._id;
+        delete obj._id;
+        delete obj.postId;
+        return obj;
+    }
 };
 //# sourceMappingURL=comment-query-repository.js.map

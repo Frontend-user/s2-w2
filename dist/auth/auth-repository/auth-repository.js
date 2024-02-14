@@ -23,6 +23,12 @@ exports.authRepositories = {
             const response = yield db_1.usersCollection.findOne({ $or: [{ login: auth.loginOrEmail }, { email: auth.loginOrEmail }] });
             return response ? response : false;
         });
+    },
+    getUserIdByAutData(auth) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield db_1.usersCollection.findOne({ $or: [{ login: auth.loginOrEmail }, { email: auth.loginOrEmail }] });
+            return response ? response : false;
+        });
     }
 };
 //# sourceMappingURL=auth-repository.js.map

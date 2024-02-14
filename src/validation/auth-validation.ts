@@ -17,13 +17,15 @@ export const authorizationMiddleware = async (req: Request, res: Response, next:
 }
 
 export const bearerAuthMiddleware = async (req:Request, res:Response, next: NextFunction)=>{
-    console.log(req,'1')
+    if(!req.headers.authorization){
+
+        res.sendStatus(401)
+        return
+    }
     let token = req.headers.authorization!.split(' ')[1]
 
     const userId = await jwtService.checkToken(token)
     const getUserByID = await usersQueryRepository.getUserById(new ObjectId(userId))
-    console.log(userId,'2')
-    console.log(getUserByID, '3')
     if(!getUserByID || !userId){
 
         res.sendStatus(401)

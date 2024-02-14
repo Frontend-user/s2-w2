@@ -13,10 +13,10 @@ export const commentQueryRepository = {
         const sortQuery = blogsSorting.getSorting(sortBy, sortDirection)
         const {skip, limit, newPageNumber, newPageSize} = blogsPaginate.getPagination(pageNumber, pageSize)
         const comments = await commentsCollection.find({postId: postId}).sort(sortQuery).skip(skip).limit(limit).toArray()
-        const allComments = await commentsCollection.find({postId: postId}).sort(sortQuery).skip(skip).limit(limit).toArray()
+        const allComments = await commentsCollection.find({postId: postId}).sort(sortQuery).toArray()
 
         let pagesCount = Math.ceil(allComments.length / newPageSize)
-        const fixArrayIds = comments.map((item => changeIdFormat(item)))
+        const fixArrayIds = comments.map((item => this.changeCommentFormat(item)))
 
         return {
             "pagesCount": pagesCount,
@@ -29,6 +29,14 @@ export const commentQueryRepository = {
     },
     async getCommentById(commentId: ObjectId) {
         const comment = await commentsCollection.findOne({_id: commentId})
-        return comment ? changeIdFormat(comment) : false
+
+        return comment ? this.changeCommentFormat(comment) : false
     },
+
+    changeCommentFormat (obj: any){
+        obj.id = obj._id
+        delete obj._id
+        delete obj.postId
+        return obj
+    }
 }

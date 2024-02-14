@@ -1,4 +1,4 @@
-import {Request, Response, Router} from "express";
+import {NextFunction, Request, Response, Router} from "express";
 import {BlogViewType} from "../../common/types/blog-type";
 import {blogsQueryRepository} from "../../blogs/blogs-query/blogs-query-repository";
 import {PostCreateType, PostViewType} from "../../common/types/post-type";
@@ -11,17 +11,31 @@ import {commentsService} from "../service/comments-service";
 import {authorizationMiddleware, bearerAuthMiddleware} from "../../validation/auth-validation";
 import {commentQueryRepository} from "../query-repository/comment-query-repository";
 import {postIdValidation} from "../../validation/posts-validation";
-import {commentContentValidation} from "../validation/comments-validation";
+import {
+    commentContentValidation, commentDeleteInputValidationMiddleware,
+    commentIdExistValidation,
+    commentInputValidationMiddleware, haveAccesForUpdate
+} from "../validation/comments-validation";
+import {param, validationResult} from "express-validator";
+import {commentsRepository} from "../repository/comments-repository";
+import {inputValidationMiddleware} from "../../validation/blogs-validation";
+import {CommentEntity} from "../types/comment-type";
+import {ErrorType} from "../../common/types/error-type";
 
 export const commentsRouter = Router({})
+
+
 
 commentsRouter.put('/:commentId',
     bearerAuthMiddleware,
     commentContentValidation,
-    // ...postValidators,
+    commentIdExistValidation,
+    haveAccesForUpdate,
+    commentInputValidationMiddleware,
+
     async (req: Request, res: Response) => {
         try {
-            const response: boolean = await postsService.updatePost(new ObjectId(req.params.commentId), req.body.content)
+            const response: boolean = await commentsService.updateComment(new ObjectId(req.params.commentId), req.body.content)
             res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404)
 
         } catch (error) {
@@ -32,9 +46,13 @@ commentsRouter.put('/:commentId',
 
 commentsRouter.delete('/:commentId',
     bearerAuthMiddleware,
+    commentIdExistValidation,
+    haveAccesForUpdate,
+    commentDeleteInputValidationMiddleware,
     async (req: Request, res: Response) => {
+        console.log(req.headers,'reqheaderDELETE')
         try {
-            const response: boolean = await postsService.deletePost(new ObjectId(req.params.commentId))
+            const response: boolean = await commentsService.deleteComment(new ObjectId(req.params.commentId))
             res.sendStatus(response ? HTTP_STATUSES.NO_CONTENT_204 : HTTP_STATUSES.NOT_FOUND_404)
         } catch (error) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

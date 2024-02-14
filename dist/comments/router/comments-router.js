@@ -11,27 +11,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsRouter = void 0;
 const express_1 = require("express");
-const posts_service_1 = require("../../posts/domain/posts-service");
 const mongodb_1 = require("mongodb");
 const http_statuses_1 = require("../../common/constants/http-statuses");
+const comments_service_1 = require("../service/comments-service");
 const auth_validation_1 = require("../../validation/auth-validation");
 const comment_query_repository_1 = require("../query-repository/comment-query-repository");
 const comments_validation_1 = require("../validation/comments-validation");
 exports.commentsRouter = (0, express_1.Router)({});
-exports.commentsRouter.put('/:commentId', auth_validation_1.bearerAuthMiddleware, comments_validation_1.commentContentValidation, 
-// ...postValidators,
-(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.commentsRouter.put('/:commentId', auth_validation_1.bearerAuthMiddleware, comments_validation_1.commentContentValidation, comments_validation_1.commentIdExistValidation, comments_validation_1.haveAccesForUpdate, comments_validation_1.commentInputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield posts_service_1.postsService.updatePost(new mongodb_1.ObjectId(req.params.commentId), req.body.content);
+        const response = yield comments_service_1.commentsService.updateComment(new mongodb_1.ObjectId(req.params.commentId), req.body.content);
         res.sendStatus(response ? http_statuses_1.HTTP_STATUSES.NO_CONTENT_204 : http_statuses_1.HTTP_STATUSES.NOT_FOUND_404);
     }
     catch (error) {
         res.sendStatus(http_statuses_1.HTTP_STATUSES.NOT_FOUND_404);
     }
 }));
-exports.commentsRouter.delete('/:commentId', auth_validation_1.bearerAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.commentsRouter.delete('/:commentId', auth_validation_1.bearerAuthMiddleware, comments_validation_1.commentIdExistValidation, comments_validation_1.haveAccesForUpdate, comments_validation_1.commentDeleteInputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(req.headers, 'reqheaderDELETE');
     try {
-        const response = yield posts_service_1.postsService.deletePost(new mongodb_1.ObjectId(req.params.commentId));
+        const response = yield comments_service_1.commentsService.deleteComment(new mongodb_1.ObjectId(req.params.commentId));
         res.sendStatus(response ? http_statuses_1.HTTP_STATUSES.NO_CONTENT_204 : http_statuses_1.HTTP_STATUSES.NOT_FOUND_404);
     }
     catch (error) {

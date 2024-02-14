@@ -19,7 +19,7 @@ import {blogsQueryRepository} from "../../blogs/blogs-query/blogs-query-reposito
 import {commentsService} from "../../comments/service/comments-service";
 import {commentQueryRepository} from "../../comments/query-repository/comment-query-repository";
 import {
-    commentContentValidation,
+    commentContentValidation, commentInputValidationMiddleware,
     commentPostIdExistValidation
 } from "../../comments/validation/comments-validation";
 import {getQueryData} from "../../common/custom-methods/query-data";
@@ -39,7 +39,8 @@ postsRouter.post('/:postId/comments',
     bearerAuthMiddleware,
     commentPostIdExistValidation,
     commentContentValidation,
-    inputValidationMiddleware,
+    commentInputValidationMiddleware,
+
     async (req: Request, res: Response) => {
         const commentContent: string = req.body.content
         const postId: string = req.params.postId
@@ -48,13 +49,14 @@ postsRouter.post('/:postId/comments',
             res.sendStatus(404)
         } else {
             const comment = await commentQueryRepository.getCommentById(commentId)
+            delete  comment.postId
             res.status(201).send(comment)
         }
     })
 
 postsRouter.get('/:postId/comments',
     commentPostIdExistValidation,
-    inputValidationMiddleware,
+    commentInputValidationMiddleware,
     async (req: Request, res: Response) => {
         let {sortBy, sortDirection, pageNumber, pageSize} = getQueryData(req)
 
@@ -63,7 +65,8 @@ postsRouter.get('/:postId/comments',
         try {
             const comment = await commentQueryRepository.getCommentsByPostId(postId, sortBy, sortDirection, pageNumber, pageSize)
 
-            res.status(201).send(comment)
+
+            res.status(200).send(comment)
 
         } catch (e) {
             res.send(HTTP_STATUSES.SERVER_ERROR_500)

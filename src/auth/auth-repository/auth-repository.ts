@@ -10,6 +10,10 @@ export const authRepositories = {
     async getUserHash(auth:AuthType){
          const response = await usersCollection.findOne({ $or: [{login:auth.loginOrEmail}, {email: auth.loginOrEmail}]})
         return response ? response: false
+    },
+    async getUserIdByAutData(auth:AuthType){
+        const response = await usersCollection.findOne({ $or: [{login:auth.loginOrEmail}, {email: auth.loginOrEmail}]})
+        return response ? response: false
     }
 
 }

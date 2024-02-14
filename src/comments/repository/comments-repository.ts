@@ -9,14 +9,16 @@ export const commentsRepository = {
         return response ? response.insertedId : false
     },
 
-    async updateComment(id: ObjectId, updateComment: string): Promise<boolean> {
+    async updateComment(id: ObjectId, updateComment: {
+        content: string
+    }): Promise<boolean> {
         const response = await commentsCollection.updateOne({_id: id}, {$set: updateComment})
         return response.matchedCount === 1;
     },
 
     async deleteCommentById(commentId: ObjectId) {
         const comment = await commentsCollection.deleteOne({_id: commentId})
-        return comment ? comment : false
+        return !!comment
     },
 
 }

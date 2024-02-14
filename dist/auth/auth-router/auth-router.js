@@ -24,6 +24,7 @@ const jwt_service_1 = require("../../application/jwt-service");
 const current_user_1 = require("../../application/current-user");
 const users_query_repository_1 = require("../../users/query-repository/users-query-repository");
 const mongodb_1 = require("mongodb");
+const auth_repository_1 = require("../auth-repository/auth-repository");
 exports.authRouter = (0, express_1.Router)({});
 exports.authRouter.get('/me', 
 // ...authValidators,
@@ -64,11 +65,11 @@ exports.authRouter.post('/login',
             res.sendStatus(http_statuses_1.HTTP_STATUSES.NOT_AUTH_401);
             return;
         }
-        console.log(req.headers.userid, 'req.headers.userid');
-        console.log(req.headers, 'req.headers.userid  HERE!');
-        res.send(req.headers);
-        const token = yield jwt_service_1.jwtService.createJWT(req.headers.userid);
-        res.send({ accessToken: token });
+        const user = yield auth_repository_1.authRepositories.getUserIdByAutData(authData);
+        if (user) {
+            const token = yield jwt_service_1.jwtService.createJWT(user._id);
+            res.send({ accessToken: token });
+        }
     }
     catch (error) {
         res.sendStatus(http_statuses_1.HTTP_STATUSES.SERVER_ERROR_500);
